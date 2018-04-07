@@ -12,9 +12,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by matik on 06.04.2018.
- */
 
 class ImageAdapter extends RecyclerView.Adapter
         <ImageAdapter.ImageViewHolder> {

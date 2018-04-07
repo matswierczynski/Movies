@@ -7,9 +7,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 import static com.example.matik.add_delete_user_recyclerview.Actor.*;
 import static com.example.matik.add_delete_user_recyclerview.Category.*;
@@ -37,16 +39,31 @@ public class MainActivity extends AppCompatActivity implements
                             "com.main.java.matik.add_delete_user_recyclerview_CATEGORY_EXTRA_TEXT";
     private final static String ACTORS_EXTRA_TEXT =
                             "com.main.java.matik.add_delete_user_recyclerview_ACTORS_EXTRA_TEXT";
+    private final static String ACTORS_AGES_EXTRA_TEXT =
+            "com.main.java.matik.add_delete_user_recyclerview_ACTORS_AGES_EXTRA_TEXT";
+    private final static String MOVIE_IMAGES_IDS_EXTRA_TEXT =
+            "com.main.java.matik.add_delete_user_recyclerview_MOVIE_IMAGES_IDS_EXTRA_TEXT ";
+    private final static String ACTORS_IMAGES_IDS_EXTRA_TEXT =
+            "com.main.java.matik.add_delete_user_recyclerview_ACTOR_IMAGES_IDS_EXTRA_TEXT ";
 
     public static void start(Context context, String movieName, String categoryName,
-                             String [] actorsNames) {
+                             String [] actorsNames, Integer [] actorsAges,
+                             Integer [] movieImagesIDs, Integer [] actorsImagesIDs) {
         Intent starter = new Intent(context, MovieActivity.class);
-        String [] extraKeys = {MOVIE_EXTRA_TEXT, CATEGORY_EXTRA_TEXT, ACTORS_EXTRA_TEXT};
+        String [] extraKeys = {MOVIE_EXTRA_TEXT, CATEGORY_EXTRA_TEXT, ACTORS_EXTRA_TEXT,
+                                ACTORS_AGES_EXTRA_TEXT, MOVIE_IMAGES_IDS_EXTRA_TEXT,
+                                ACTORS_IMAGES_IDS_EXTRA_TEXT};
         starter.putExtra(Intent.EXTRA_TEXT, extraKeys);
         starter.putExtra(MOVIE_EXTRA_TEXT, movieName);
         starter.putExtra(CATEGORY_EXTRA_TEXT, categoryName);
         starter.putStringArrayListExtra(ACTORS_EXTRA_TEXT,
                                         new ArrayList<>(Arrays.asList(actorsNames)));
+        starter.putIntegerArrayListExtra(ACTORS_AGES_EXTRA_TEXT,
+                                        new ArrayList<>(Arrays.asList(actorsAges)));
+        starter.putIntegerArrayListExtra(MOVIE_IMAGES_IDS_EXTRA_TEXT,
+                                        new ArrayList<>(Arrays.asList(movieImagesIDs)));
+        starter.putIntegerArrayListExtra(ACTORS_IMAGES_IDS_EXTRA_TEXT,
+                                        new ArrayList<>(Arrays.asList(actorsImagesIDs)));
         context.startActivity(starter);
     }
 
@@ -71,10 +88,44 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    private Integer [] getImagesFromStartName(String name){
+        name = name.replaceAll("\\s+","");
+        name = name.toLowerCase();
+        Field[] fields = R.drawable.class.getFields();
+        List<Integer> drawables = new ArrayList<Integer>();
+        for (Field field : fields) {
+            // Take only those with name starting with movie title
+            if (field.getName().startsWith(name)) {
+                try {
+                    drawables.add(field.getInt(null));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return drawables.toArray(new Integer[drawables.size()]);
+    }
+
+    private Integer [] getAllMovieActorsImagesIds(Movie movie, Context context) {
+        String[] actorsNames = movie.getActorsNames();
+        Integer[] actorsImagesIDs = new Integer[actorsNames.length];
+        for (int i = 0; i < actorsNames.length; i++) {
+            String name = actorsNames[i].replaceAll("\\s+", "");
+            name = name.toLowerCase();
+            actorsImagesIDs[i] = context.getResources().getIdentifier(name,
+                    "drawable",
+                    context.getPackageName());
+        }
+        return actorsImagesIDs;
+    }
+
     @Override
     public void onItemClick(int position) {
         start(this, movies[position].getTitle(),
-                movies[position].getCategoryName(), movies[position].getActorsNames());
+                movies[position].getCategoryName(), movies[position].getActorsNames(),
+                movies[position].getActorsAges(),
+                getImagesFromStartName(movies[position].getTitle()),
+                getAllMovieActorsImagesIds(movies[position], this));
     }
 
     public void initializeItemTouchHelper(final MovieAdapter adapter) {
