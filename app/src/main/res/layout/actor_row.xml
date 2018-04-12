@@ -15,41 +15,53 @@
 
         <TextView
             android:id="@+id/singleActorData"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
+            android:layout_toEndOf="@+id/singleActorImage"
+            android:layout_weight="1"
             android:padding="2dp"
             android:text="@string/default_text"
-            android:textSize="18sp"
+            android:textAlignment="center"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/singleActorImage"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/singleActorAge"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/singleActorData"
+            android:layout_below="@+id/singleActorData"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="1dp"
             android:layout_marginTop="8dp"
+            android:layout_weight="1"
             android:padding="2dp"
             android:text="@string/default_text"
-            android:textSize="18sp"
+            android:textAlignment="center"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/singleActorImage"
             app:layout_constraintTop_toBottomOf="@+id/singleActorData" />
 
-    <ImageView
-        android:id="@+id/singleActorImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:src="@drawable/ic_launcher_background" />
+        <ImageView
+            android:id="@+id/singleActorImage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/singleActorData"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
 

@@ -9,37 +9,35 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.List;
 
-/**
- * Created by matik on 22.03.2018.
- */
 
 public class MovieAdapter extends RecyclerView.Adapter
                                         <MovieAdapter.MovieViewHolder> {
 
     private LayoutInflater layoutInflater;
     private List<Movie> movies;
+    private List<Integer> moviesPosters;
     private OnItemClicked onClick;
 
-    public MovieAdapter(Context context, List<Movie> movies){
+    MovieAdapter(Context context, List<Movie> movies, List<Integer> moviesPosters){
         layoutInflater=LayoutInflater.from(context);
         this.movies = movies;
+        this.moviesPosters = moviesPosters;
     }
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = layoutInflater.inflate(R.layout.movie_row, parent, false);
-        MovieViewHolder holder = new MovieViewHolder(view);
-        return holder;
+        return new MovieViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MovieViewHolder holder, final int position) {
+    public void onBindViewHolder(final MovieViewHolder holder, int position) {
         holder.movieName.setText(movies.get(position).getTitle());
         holder.categoryName.setText(movies.get(position).getCategoryName());
-        holder.movieImage.setImageResource(R.drawable.ic_launcher_background);
+        holder.movieImage.setImageResource(moviesPosters.get(position));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClick.onItemClick(position);
+                onClick.onItemClick(holder.getAdapterPosition());
             }
         });
 
@@ -52,12 +50,12 @@ public class MovieAdapter extends RecyclerView.Adapter
     }
 
 
-    public void removeAt(int position){
+    void removeAt(int position){
         movies.remove(position);
         notifyItemRemoved(position);
     }
 
-    public void setOnClick(OnItemClicked onClick)
+    void setOnClick(OnItemClicked onClick)
     {
         this.onClick=onClick;
     }
@@ -68,7 +66,7 @@ public class MovieAdapter extends RecyclerView.Adapter
         private TextView movieName, categoryName;
         private ImageView movieImage;
 
-        public MovieViewHolder(View itemView) {
+        MovieViewHolder(View itemView) {
             super(itemView);
             movieName = itemView.findViewById(R.id.movie_row_name);
             categoryName  = itemView.findViewById(R.id.movie_row_category);

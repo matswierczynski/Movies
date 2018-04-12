@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements
                                 new Movie("Player One", ADVENTURE, playerActors),
                                 new Movie("Shape of Water", FANTASY, shapeActors),
                                 new Movie("Tomb Raider", ADVENTURE, tombActors)};
+    private static Integer POSTER_POSITION_IN_IMAGES_ARRAY = 0;
     private final static String MOVIE_EXTRA_TEXT =
                             "com.main.java.matik.add_delete_user_recyclerview_MOVIE_EXTRA_TEXT";
     private final static String CATEGORY_EXTRA_TEXT =
@@ -46,9 +47,9 @@ public class MainActivity extends AppCompatActivity implements
     private final static String ACTORS_IMAGES_IDS_EXTRA_TEXT =
             "com.main.java.matik.add_delete_user_recyclerview_ACTOR_IMAGES_IDS_EXTRA_TEXT ";
 
-    public static void start(Context context, String movieName, String categoryName,
-                             String [] actorsNames, Integer [] actorsAges,
-                             Integer [] movieImagesIDs, Integer [] actorsImagesIDs) {
+    public static void startMovieActivity(Context context, String movieName, String categoryName,
+                                          String [] actorsNames, Integer [] actorsAges,
+                                          Integer [] movieImagesIDs, Integer [] actorsImagesIDs) {
         Intent starter = new Intent(context, MovieActivity.class);
         String [] extraKeys = {MOVIE_EXTRA_TEXT, CATEGORY_EXTRA_TEXT, ACTORS_EXTRA_TEXT,
                                 ACTORS_AGES_EXTRA_TEXT, MOVIE_IMAGES_IDS_EXTRA_TEXT,
@@ -82,17 +83,19 @@ public class MainActivity extends AppCompatActivity implements
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MovieAdapter(this,
-                                        new LinkedList<>(Arrays.asList(movies) ));
+                                        new LinkedList<>(Arrays.asList(movies)),
+                                        new LinkedList<>(
+                                                Arrays.asList(getMoviesPostersIdsByMovieName())));
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnClick(this);
 
     }
 
-    private Integer [] getImagesFromStartName(String name){
+    private Integer [] getMovieImagesIdsByMovieName(String name){
         name = name.replaceAll("\\s+","");
         name = name.toLowerCase();
         Field[] fields = R.drawable.class.getFields();
-        List<Integer> drawables = new ArrayList<Integer>();
+        List<Integer> drawables = new ArrayList<>();
         for (Field field : fields) {
             // Take only those with name starting with movie title
             if (field.getName().startsWith(name)) {
@@ -106,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements
         return drawables.toArray(new Integer[drawables.size()]);
     }
 
-    private Integer [] getAllMovieActorsImagesIds(Movie movie, Context context) {
+    private Integer [] getMoviesActorsImagesIdsByMovieName(Movie movie, Context context) {
         String[] actorsNames = movie.getActorsNames();
         Integer[] actorsImagesIDs = new Integer[actorsNames.length];
         for (int i = 0; i < actorsNames.length; i++) {
@@ -119,13 +122,22 @@ public class MainActivity extends AppCompatActivity implements
         return actorsImagesIDs;
     }
 
+    private Integer [] getMoviesPostersIdsByMovieName(){
+        Integer [] moviesPosterId = new Integer[movies.length];
+        for (int i=0;i<movies.length;i++){
+            moviesPosterId[i] = getMovieImagesIdsByMovieName
+                                (movies[i].getTitle())[POSTER_POSITION_IN_IMAGES_ARRAY];
+        }
+        return moviesPosterId;
+    }
+
     @Override
     public void onItemClick(int position) {
-        start(this, movies[position].getTitle(),
+        startMovieActivity(this, movies[position].getTitle(),
                 movies[position].getCategoryName(), movies[position].getActorsNames(),
                 movies[position].getActorsAges(),
-                getImagesFromStartName(movies[position].getTitle()),
-                getAllMovieActorsImagesIds(movies[position], this));
+                getMovieImagesIdsByMovieName(movies[position].getTitle()),
+                getMoviesActorsImagesIdsByMovieName(movies[position], this));
     }
 
     public void initializeItemTouchHelper(final MovieAdapter adapter) {
@@ -140,6 +152,13 @@ public class MainActivity extends AppCompatActivity implements
 
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                        Movie [] temp = new Movie[movies.length-1];
+                        System.arraycopy(movies, 0,
+                                temp, 0,viewHolder.getAdapterPosition());
+                        System.arraycopy(movies, viewHolder.getAdapterPosition()+1,
+                                temp, viewHolder.getAdapterPosition(),
+                                temp.length - viewHolder.getAdapterPosition());
+                        movies = temp;
                         adapter.removeAt(viewHolder.getAdapterPosition());
 
                     }

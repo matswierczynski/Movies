@@ -1,12 +1,5 @@
 package com.example.matik.add_delete_user_recyclerview;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-/**
- * Created by matik on 03.04.2018.
- */
-
 enum Actor{
     PORTMANN("Natalie", "Portman",6 ,4,1971),
     LEIGH("Jeniffer", "Leigh",8,7,1971),
@@ -28,7 +21,7 @@ enum Actor{
     COOKE("Olivia", "Cooke", 13, 11, 1985),
     MENDELSOHN("Ben", "Mendelsohn", 10, 10, 1983),
     WAITHE("Lena", "Waithe", 13, 11, 1985),
-    MILLER("T.J.", "Miller", 11, 12, 1981),
+    MILLER("T", "Miller", 11, 12, 1981),
     PEGG("Simon", "Pegg", 29, 12, 1999),
 
     HAWKINS("Sally", "Hawkins", 31, 7, 1979),

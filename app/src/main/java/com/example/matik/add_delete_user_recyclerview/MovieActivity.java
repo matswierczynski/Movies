@@ -1,6 +1,7 @@
 package com.example.matik.add_delete_user_recyclerview;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -42,44 +43,46 @@ public class MovieActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
-        getExtra();
+        getExtras();
         fillMovieData(movieName, categoryName, imagesIDs);
-
-        Bundle imagesFragbundle = new Bundle();
-        ArrayList<Integer> imagesList = new ArrayList<>(imagesIDs.
-                                        subList(MOVIE_IMAGES_POSITION_IN_ARRAY, imagesIDs.size()));
-        imagesFragbundle.putIntegerArrayList(Intent.EXTRA_TEXT, imagesList);
-        ImagesFragment imagesFragment = new ImagesFragment();
-        imagesFragment.setArguments(imagesFragbundle);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.images_fragment_container, imagesFragment);
+        fragmentTransaction.replace(R.id.images_fragment_container,
+                createMoviePicturesFragment());
+        fragmentTransaction.replace(R.id.actors_fragment_container,
+                createMovieActorsFragment());
         fragmentTransaction.commit();
+    }
 
+    private Fragment createMoviePicturesFragment(){
+        Bundle imagesFragbundle = new Bundle();
+        ArrayList<Integer> imagesList = new ArrayList<>(imagesIDs.
+                subList(MOVIE_IMAGES_POSITION_IN_ARRAY, imagesIDs.size()));
+        imagesFragbundle.putIntegerArrayList(Intent.EXTRA_TEXT, imagesList);
+        ImagesFragment imagesFragment = new ImagesFragment();
+        imagesFragment.setArguments(imagesFragbundle);
+        return imagesFragment;
+    }
+
+    private Fragment createMovieActorsFragment(){
         String [] extraKeys = {ACTORS_EXTRA_TEXT, ACTORS_AGES_EXTRA_TEXT,
-                                ACTORS_IMAGES_IDS_EXTRA_TEXT};
-
+                ACTORS_IMAGES_IDS_EXTRA_TEXT};
         Bundle actorsFragBundle = new Bundle();
         actorsFragBundle.putStringArrayList(Intent.EXTRA_TEXT,
                 new ArrayList<>(Arrays.asList(extraKeys)));
         actorsFragBundle.putStringArrayList(ACTORS_EXTRA_TEXT,
-                                            new ArrayList<>(actorsNames));
+                new ArrayList<>(actorsNames));
         actorsFragBundle.putIntegerArrayList(ACTORS_AGES_EXTRA_TEXT,
-                                            new ArrayList<>(actorsAges));
+                new ArrayList<>(actorsAges));
         actorsFragBundle.putIntegerArrayList(ACTORS_IMAGES_IDS_EXTRA_TEXT,
-                                            new ArrayList<>(actorsIDs));
+                new ArrayList<>(actorsIDs));
         ActorsFragment actorsFragment = new ActorsFragment();
         actorsFragment.setArguments(actorsFragBundle);
-
-        fragmentManager = getSupportFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.actors_fragment_container, actorsFragment);
-        fragmentTransaction.commit();
-
+        return actorsFragment;
     }
 
-    private void getExtra(){
+    private void getExtras(){
         String[] EXTRA_KEYS;
         EXTRA_KEYS = getIntent().getStringArrayExtra(Intent.EXTRA_TEXT);
         MOVIE_EXTRA_TEXT = EXTRA_KEYS[MOVIE_EXTRA_KEY_POSITION_IN_ARRAY];
